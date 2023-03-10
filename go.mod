@@ -1,4 +1,4 @@
-module gocheat
+module github.com/shutils/gocheat
 
 go 1.20
 
