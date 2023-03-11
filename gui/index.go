@@ -71,11 +71,13 @@ func (i *indexPanel) setScroll(row int, column int) {
 			tp := p.getEntity()
 			tv, ok := tp.(*tview.TextView)
 			if ok {
-				indexRow, err := strconv.Atoi(i.entity.GetCell(row, 1).Text)
-				if err != nil {
-					log.Fatalln(err)
+				if !i.entity.GetCell(row, column).NotSelectable {
+					indexRow, err := strconv.Atoi(i.entity.GetCell(row, 1).Text)
+					if err != nil {
+						log.Fatalln(err)
+					}
+					tv.ScrollTo(indexRow, 0)
 				}
-				tv.ScrollTo(indexRow, 0)
 			}
 		}
 	}
@@ -86,12 +88,20 @@ func (i *indexPanel) updatePanel(g *Gui) {
 	cpt, ok := cp.(*tview.Table)
 	if ok {
 		i.entity.Clear()
+		i.entity.SetCell(0, 0, &tview.TableCell{
+			Text:          "headline",
+			NotSelectable: true,
+		})
+		i.entity.SetCell(0, 1, &tview.TableCell{
+			Text:          "index",
+			NotSelectable: true,
+		})
 		row, colulmn := cpt.GetSelection()
 		fn := cpt.GetCell(row, colulmn).Text
 		fns := common.GetIndex(fn)
 		for index, v := range fns {
-			i.entity.SetCellSimple(index, 0, v.Text)
-			i.entity.SetCellSimple(index, 1, strconv.Itoa(v.Index))
+			i.entity.SetCellSimple(1+index, 0, v.Text)
+			i.entity.SetCellSimple(1+index, 1, strconv.Itoa(v.Index))
 		}
 	}
 }
