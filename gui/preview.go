@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"gocheat/common"
+	"github.com/shutils/gocheat/common"
 	"log"
 	"path"
 
@@ -11,13 +11,13 @@ import (
 
 type preview struct {
 	entity *tview.TextView
-  parent *Gui
+	parent *Gui
 }
 
 func getPreview(g *Gui) *preview {
 	panel := &preview{
-    parent: g,
-  }
+		parent: g,
+	}
 	panel.initEntity()
 	return panel
 }
