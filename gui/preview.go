@@ -72,3 +72,14 @@ func (p *preview) setKeybind(g *Gui) {
 		return event
 	})
 }
+
+func (p *preview) updatePanel(g *Gui) {
+  cp := g.getPanelEntity("categories")
+  cpt, ok := cp.(*tview.Table)
+  if ok {
+    row, colulmn := cpt.GetSelection()
+    fn := cpt.GetCell(row, colulmn).Text
+    t := common.GetText(fn)
+    p.entity.SetText(t)
+  }
+}

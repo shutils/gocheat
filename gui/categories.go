@@ -2,8 +2,6 @@ package gui
 
 import (
 	"github.com/shutils/gocheat/common"
-	"path/filepath"
-	"strconv"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -38,7 +36,7 @@ func (c *categories) focus(g *Gui) {
 
 func (c *categories) initEntity() {
 	c.entity = tview.NewTable()
-	c.loadFiles()
+	c.updatePanel(c.parent)
 	c.entity.SetTitle(c.getName()).SetBorder(true).SetTitleAlign(0)
 	c.entity.SetSelectable(true, false)
 	c.entity.SetSelectionChangedFunc(c.updator)
@@ -64,7 +62,7 @@ func (c *categories) setKeybind(g *Gui) {
 	})
 }
 
-func (c *categories) loadFiles() {
+func (c *categories) updatePanel(g *Gui) {
 	appDirName := common.GetAppDirName()
 	fs := common.GetFileNames(appDirName)
 	for i, v := range fs {
@@ -80,12 +78,7 @@ func (c *categories) updator(row int, column int) {
 func (c *categories) updatePreview(row int, column int) {
 	for _, p := range c.parent.panels {
 		if p.getName() == "preview" {
-			tp := p.getEntity()
-			tv, ok := tp.(*tview.TextView)
-			if ok {
-				text := common.GetText(filepath.Join(common.GetAppDirName(), c.entity.GetCell(row, column).Text))
-				tv.SetText(text)
-			}
+      p.updatePanel(c.parent)
 		}
 	}
 }
@@ -93,16 +86,7 @@ func (c *categories) updatePreview(row int, column int) {
 func (c *categories) updateIndex(row int, column int) {
 	for _, p := range c.parent.panels {
 		if p.getName() == "index" {
-			tp := p.getEntity()
-			t, ok := tp.(*tview.Table)
-			if ok {
-        t.Clear()
-				indexes := common.GetIndex(filepath.Join(c.entity.GetCell(row, column).Text))
-				for i, v := range indexes {
-					t.SetCell(i, 0, tview.NewTableCell(v.Text))
-					t.SetCell(i, 1, tview.NewTableCell(strconv.Itoa(v.Index)))
-				}
-			}
+      p.updatePanel(c.parent)
 		}
 	}
 }

@@ -29,6 +29,7 @@ func (g *Gui) initApp() {
 	cp.setKeybind(g)
 	ip := getIndexPanel(g)
 	ip.setEntity(g)
+	ip.updatePanel(g)
 	pp := getPreview(g)
 	pp.setEntity(g)
 	cp.updatePreview(0, 0)

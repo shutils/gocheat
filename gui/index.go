@@ -6,6 +6,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"github.com/shutils/gocheat/common"
 )
 
 type indexPanel struct {
@@ -39,7 +40,7 @@ func (i *indexPanel) initEntity() {
 	i.entity = tview.NewTable()
 	i.entity.SetTitle(i.getName()).SetBorder(true).SetTitleAlign(0)
 	i.entity.SetSelectable(true, false)
-  i.entity.SetSelectionChangedFunc(i.setScroll)
+	i.entity.SetSelectionChangedFunc(i.setScroll)
 }
 
 func (i *indexPanel) setEntity(g *Gui) {
@@ -70,12 +71,27 @@ func (i *indexPanel) setScroll(row int, column int) {
 			tp := p.getEntity()
 			tv, ok := tp.(*tview.TextView)
 			if ok {
-        indexRow, err := strconv.Atoi(i.entity.GetCell(row, 1).Text)
-        if err != nil {
-          log.Fatalln(err)
-        }
+				indexRow, err := strconv.Atoi(i.entity.GetCell(row, 1).Text)
+				if err != nil {
+					log.Fatalln(err)
+				}
 				tv.ScrollTo(indexRow, 0)
 			}
+		}
+	}
+}
+
+func (i *indexPanel) updatePanel(g *Gui) {
+	cp := g.getPanelEntity("categories")
+	cpt, ok := cp.(*tview.Table)
+	if ok {
+		i.entity.Clear()
+		row, colulmn := cpt.GetSelection()
+		fn := cpt.GetCell(row, colulmn).Text
+		fns := common.GetIndex(fn)
+		for index, v := range fns {
+			i.entity.SetCellSimple(index, 0, v.Text)
+			i.entity.SetCellSimple(index, 1, strconv.Itoa(v.Index))
 		}
 	}
 }

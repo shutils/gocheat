@@ -7,7 +7,8 @@ type panel interface {
 	getWidth() int
 	initEntity()
 	setEntity(*Gui)
-  getEntity() tview.Primitive
+	getEntity() tview.Primitive
 	focus(*Gui)
 	setKeybind(*Gui)
+	updatePanel(*Gui)
 }
