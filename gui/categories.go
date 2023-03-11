@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"gocheat/common"
+	"github.com/shutils/gocheat/common"
 	"path/filepath"
 	"strconv"
 
