@@ -2,7 +2,6 @@ package common
 
 import (
 	"bufio"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -35,18 +34,21 @@ func AppDirIsExist(name string) (r bool) {
 }
 
 func GetFileNames(appDirName string) (fns []string) {
-	fs, err := ioutil.ReadDir(appDirName)
+	fs, err := os.ReadDir(appDirName)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	for _, v := range fs {
-		fns = append(fns, v.Name())
+		if !v.IsDir() {
+			fns = append(fns, v.Name())
+		}
 	}
 	return
 }
 
 func GetText(filename string) (t string) {
-	tb, err := ioutil.ReadFile(filename)
+	appDirName := GetAppDirName()
+	tb, err := os.ReadFile(filepath.Join(appDirName, filename))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -63,29 +65,29 @@ func EditFile(filename string) error {
 }
 
 type Index struct {
-  Text string
-  Index int
+	Text  string
+	Index int
 }
 
 func GetIndex(filename string) (indexes []Index) {
-  appDirName := GetAppDirName()
-  fp, err := os.Open(filepath.Join(appDirName, filename))
-  if err != nil {
-    log.Fatalln(err)
-  }
-  defer fp.Close()
+	appDirName := GetAppDirName()
+	fp, err := os.Open(filepath.Join(appDirName, filename))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer fp.Close()
 
-  s := bufio.NewScanner(fp)
+	s := bufio.NewScanner(fp)
 
-  var ta []string
-  r := regexp.MustCompile(`<.+>`)
-  for s.Scan() {
-    ta = append(ta, s.Text())
-  }
-  for i, v := range ta {
-    if r.MatchString(v) {
-      indexes = append(indexes, Index{Text: v, Index: i})
-    }
-  }
-  return
+	var ta []string
+	r := regexp.MustCompile(`<.+>`)
+	for s.Scan() {
+		ta = append(ta, s.Text())
+	}
+	for i, v := range ta {
+		if r.MatchString(v) {
+			indexes = append(indexes, Index{Text: v, Index: i})
+		}
+	}
+	return
 }
