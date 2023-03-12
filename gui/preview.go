@@ -62,19 +62,19 @@ func (p *preview) setKeybind(g *Gui) {
 			g.app.Suspend(func() {
 				common.EditFile(path.Join(appDirName, category))
 			})
-      g.updateAllPanel()
+			g.updateAllPanel()
 		}
 		return event
 	})
 }
 
 func (p *preview) updatePanel(g *Gui) {
-  cp := g.getPanelEntity("categories")
-  cpt, ok := cp.(*tview.Table)
-  if ok {
-    row, colulmn := cpt.GetSelection()
-    fn := cpt.GetCell(row, colulmn).Text
-    t := common.GetText(fn)
-    p.entity.SetText(t)
-  }
+	cp := g.getPanelEntity("categories")
+	cpt, ok := cp.(*tview.Table)
+	if ok {
+		row, colulmn := cpt.GetSelection()
+		fn := cpt.GetCell(row, colulmn).Text
+		t := common.GetText(fn)
+		p.entity.SetText(t)
+	}
 }
