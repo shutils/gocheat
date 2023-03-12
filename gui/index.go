@@ -18,7 +18,7 @@ func getIndexPanel(g *Gui) *indexPanel {
 	panel := &indexPanel{
 		parent: g,
 	}
-	panel.initEntity()
+	panel.initEntity(g)
 	return panel
 }
 
@@ -36,17 +36,11 @@ func (i *indexPanel) focus(g *Gui) {
 	g.app.SetFocus(i.entity)
 }
 
-func (i *indexPanel) initEntity() {
+func (i *indexPanel) initEntity(g *Gui) {
 	i.entity = tview.NewTable()
 	i.entity.SetTitle(i.getName()).SetBorder(true).SetTitleAlign(0)
 	i.entity.SetSelectable(true, false)
 	i.entity.SetSelectionChangedFunc(i.setScroll)
-}
-
-func (i *indexPanel) setEntity(g *Gui) {
-	i.initEntity()
-	g.panels = append(g.panels, i)
-	g.flex.AddItem(i.entity, 0, i.getWidth(), true)
 }
 
 func (i *indexPanel) getEntity() tview.Primitive {

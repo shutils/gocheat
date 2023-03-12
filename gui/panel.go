@@ -5,8 +5,7 @@ import "github.com/rivo/tview"
 type panel interface {
 	getName() string
 	getWidth() int
-	initEntity()
-	setEntity(*Gui)
+	initEntity(*Gui)
 	getEntity() tview.Primitive
 	focus(*Gui)
 	setKeybind(*Gui)

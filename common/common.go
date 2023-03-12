@@ -91,3 +91,11 @@ func GetIndex(filename string) (indexes []Index) {
 	}
 	return
 }
+
+func CreateFile(filename string) error {
+  _, err := os.Create(filepath.Join(GetAppDirName(), filename))
+  if err != nil {
+    return err
+  }
+  return nil
+}

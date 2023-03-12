@@ -1,13 +1,15 @@
 package gui
 
 import (
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
 type Gui struct {
-	app    *tview.Application
-	panels []panel
-	flex   *tview.Flex
+	app          *tview.Application
+	panels       []panel
+	pages        *tview.Pages
+	currentPanel string
 }
 
 func New() *Gui {
@@ -23,17 +25,28 @@ func (g *Gui) Run() {
 }
 
 func (g *Gui) initApp() {
-	g.flex = tview.NewFlex()
-	cp := getCategories(g)
-	cp.setEntity(g)
-	cp.setKeybind(g)
-	ip := getIndexPanel(g)
-	ip.setEntity(g)
-	ip.updatePanel(g)
-	pp := getPreview(g)
-	pp.setEntity(g)
-	cp.updatePreview(0, 0)
-	g.app.SetRoot(g.flex, true)
+	g.panels = append(g.panels, getCategories(g))
+	g.panels = append(g.panels, getIndexPanel(g))
+	g.panels = append(g.panels, getPreview(g))
+	g.pages = tview.NewPages()
+	g.initPanel()
+	g.focusPanel("categories")
+	g.app.SetRoot(g.pages, true).SetFocus(g.pages)
+	g.updateAllPanel()
+}
+
+func (g *Gui) initPanel() {
+	flex := tview.NewFlex()
+	for _, p := range g.panels {
+		flex.AddItem(p.getEntity(), 0, p.getWidth(), true)
+	}
+	g.pages.AddPage("main", flex, true, true)
+}
+
+func (g *Gui) updateAllPanel() {
+	for _, p := range g.panels {
+		p.updatePanel(g)
+	}
 }
 
 func (g *Gui) focusPanel(name string) {
@@ -41,6 +54,7 @@ func (g *Gui) focusPanel(name string) {
 		if p.getName() == name {
 			p.focus(g)
 			p.setKeybind(g)
+			g.currentPanel = p.getName()
 		}
 	}
 }
@@ -52,4 +66,15 @@ func (g *Gui) getPanelEntity(name string) (e tview.Primitive) {
 		}
 	}
 	return
+}
+
+func (g *Gui) openModal(name string, modal tview.Primitive, keybind func(event *tcell.EventKey) *tcell.EventKey) {
+	g.pages.AddPage(name, modal, true, true)
+	g.app.SetInputCapture(keybind)
+}
+
+func (g *Gui) closeModal(name string) {
+	g.pages.HidePage(name)
+	g.pages.RemovePage(name)
+	g.focusPanel(g.currentPanel)
 }
