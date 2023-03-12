@@ -62,6 +62,7 @@ func (p *preview) setKeybind(g *Gui) {
 			g.app.Suspend(func() {
 				common.EditFile(path.Join(appDirName, category))
 			})
+      g.updateAllPanel()
 		}
 		return event
 	})
