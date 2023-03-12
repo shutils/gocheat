@@ -80,7 +80,7 @@ func GetIndex(filename string) (indexes []Index) {
 	s := bufio.NewScanner(fp)
 
 	var ta []string
-	r := regexp.MustCompile(`<.+>`)
+	r := regexp.MustCompile(`^<.+>`)
 	for s.Scan() {
 		ta = append(ta, s.Text())
 	}
